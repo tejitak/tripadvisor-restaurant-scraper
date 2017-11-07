@@ -6,12 +6,13 @@ import time
 from pyvirtualdisplay import Display
 
 #import items.py
-class DmozSpider(scrapy.Spider):
-    name = "dmoz"
+class SpotSpider(scrapy.Spider):
+    name = "spot"
     allowed_domains = ["tripadvisor.com"]
     start_urls = [
-        #"https://www.tripadvisor.com/Restaurants-g304554-Mumbai_Bombay_Maharashtra.html"
-        "https://www.tripadvisor.com/Restaurants-g298184-Tokyo_Tokyo_Prefecture_Kanto.html"
+        # "https://www.tripadvisor.com/Attractions-g293916-Activities-oa450-Bangkok.html#ATTRACTION_LIST"
+        # "https://www.tripadvisor.com/Attractions-g293916-Activities-oa30-Bangkok.html"
+        "https://www.tripadvisor.com/Attractions-g293916-Activities-c47-Bangkok.html"
     ]
     def __init__(self):
         display = Display(visible=0, size=(800, 800))  
@@ -23,13 +24,13 @@ class DmozSpider(scrapy.Spider):
         time.sleep(5.0)
         body = self.browser.page_source
         sel_response = Selector(text=body)
-        restro_list = sel_response.xpath('//*[@id="EATERY_SEARCH_RESULTS"]/div[contains(@class, "listing")]')
+        spot_list = sel_response.xpath('//*[@id="ATTR_ENTRY_"]//div[contains(@class, "listing_details")]')
         l = "https://www.tripadvisor.com"
-        # print('len', len(restro_list))
+        # print('len', len(spot_list))
         f = open('data.csv', 'w+')
-        for restro in restro_list:
-            name = restro.xpath('div[2]/div/div[contains(@class, "title")]/a/text()').extract()[0].replace("\n","")
-            link = l+restro.xpath('div[2]/div/div[contains(@class, "title")]/a/@href').extract()[0]
+        for restro in spot_list:
+            name = restro.xpath('div/div[contains(@class, "listing_title ")]/a/text()').extract()[0].replace("\n","")
+            link = l+restro.xpath('div/div[contains(@class, "listing_title ")]/a/@href').extract()[0]
             print(name, link)
             f.write('"' + name.replace('"', '""') + '",' + link + "\n")
             f.flush()
@@ -44,15 +45,15 @@ class DmozSpider(scrapy.Spider):
             time.sleep(5.0)
             body = self.browser.page_source
             sel_response = Selector(text=body)
-            restro_list = sel_response.xpath('//*[@id="EATERY_SEARCH_RESULTS"]/div[contains(@class, "listing")]')
+            spot_list = sel_response.xpath('//*[@id="ATTR_ENTRY_"]//div[contains(@class, "listing_details")]')
             l = "https://www.tripadvisor.com"
-            for restro in restro_list:
-                name = restro.xpath('div[2]/div/div[contains(@class, "title")]/a/text()').extract()[0].replace("\n","")
-                link = l+restro.xpath('div[2]/div/div[contains(@class, "title")]/a/@href').extract()[0]
+            for restro in spot_list:
+                name = restro.xpath('div/div[contains(@class, "listing_title ")]/a/text()').extract()[0].replace("\n","")
+                link = l+restro.xpath('div/div[contains(@class, "listing_title ")]/a/@href').extract()[0]
                 print(name, link)
                 f.write('"' + name.replace('"', '""') + '",' + link + "\n")
                 f.flush()
-            next = self.browser.find_element_by_xpath('//*[@id="EATERY_LIST_CONTENTS"]/div[3]/div/a[2]')
+            next = self.browser.find_element_by_xpath('//div[contains(@class, "unified pagination")]/a[contains(@class, "nav next rndBtn ui_button primary taLnk")]')
             if not next:
               break
             self.browser.execute_script('document.querySelector("a.nav.next").click();')
