@@ -12,7 +12,8 @@ class SpotSpider(scrapy.Spider):
     start_urls = [
         # "https://www.tripadvisor.com/Attractions-g293916-Activities-oa450-Bangkok.html#ATTRACTION_LIST"
         # "https://www.tripadvisor.com/Attractions-g293916-Activities-oa30-Bangkok.html"
-        "https://www.tripadvisor.com/Attractions-g293916-Activities-c47-Bangkok.html"
+        # "https://www.tripadvisor.com/Attractions-g293916-Activities-c47-Bangkok.html"
+        "https://www.tripadvisor.com/Attractions-g293916-Activities-c20-Bangkok.html"
     ]
     def __init__(self):
         display = Display(visible=0, size=(800, 800))  
